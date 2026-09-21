@@ -1,7 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/router-for-me/CLIProxyAPI-Plugins-Store/main/schema.json",
-  "name": "Personal Custom Plugins Registry",
-  "description": "Custom Plugins Store Registry",
+  "schema_version": 1,
   "plugins": [
     {
       "id": "antigravity-coding-filter",
