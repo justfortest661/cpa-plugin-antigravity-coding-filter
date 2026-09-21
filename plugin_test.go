@@ -40,6 +40,9 @@ func TestHandlePluginCallRegisterDeclaresBothFilterModes(t *testing.T) {
 	if !hasConfigField(fields, "use_default_keywords", "boolean") {
 		t.Fatalf("ConfigFields = %#v, want boolean use_default_keywords", fields)
 	}
+	if !hasConfigField(fields, "target_models", "array") {
+		t.Fatalf("ConfigFields = %#v, want array target_models", fields)
+	}
 	if !hasConfigField(fields, "custom_mappings", "object") {
 		t.Fatalf("ConfigFields = %#v, want object custom_mappings", fields)
 	}

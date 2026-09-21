@@ -29,7 +29,7 @@ The built-in preset is enabled by default and covers major AI coding editors, as
 
 ## Mapping Configuration
 
-You can select rewrite mode, disable the built-in preset, and provide your own mapping relationships in the plugin config:
+You can select rewrite mode, target specific models, disable the built-in preset, and provide your own mapping relationships in the plugin config:
 
 ```yaml
 plugins:
@@ -39,6 +39,11 @@ plugins:
       priority: 1
       mode: rewrite
       use_default_keywords: false
+      # Optional: only apply filter when the requested or resolved model matches one of the target patterns (supports wildcard *).
+      # If empty or omitted, filtering applies globally to all requests.
+      target_models:
+        - "antigravity*"
+        - "gemini-*"
       custom_mappings:
         Cursor: Antigravity
         Windsurf: Antigravity
@@ -72,6 +77,7 @@ plugins:
       priority: 1
       mode: block
       use_default_keywords: true
+      target_models: []
       custom_mappings: {}
 ```
 

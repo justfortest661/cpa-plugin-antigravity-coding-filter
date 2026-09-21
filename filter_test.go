@@ -100,6 +100,36 @@ func TestRewriteRequestIgnoresKeywordsOutsideSystem(t *testing.T) {
 	}
 }
 
+func TestTargetModelsFiltering(t *testing.T) {
+	defer restoreDefaultFilterConfig(t)
+
+	applyFilterConfig(filterConfig{
+		Mode:               filterModeRewrite,
+		UseDefaultKeywords: true,
+		TargetModels:       []string{"antigravity*", "gemini-2.5-*"},
+	})
+
+	// Match antigravity
+	if !modelMatchesTargets("antigravity/claude-3-7-sonnet", []string{"antigravity*", "gemini-2.5-*"}) {
+		t.Fatal("expected antigravity/claude-3-7-sonnet to match")
+	}
+
+	// Match gemini
+	if !modelMatchesTargets("gemini-2.5-pro", []string{"antigravity*", "gemini-2.5-*"}) {
+		t.Fatal("expected gemini-2.5-pro to match")
+	}
+
+	// Non-match openai
+	if modelMatchesTargets("gpt-4o", []string{"antigravity*", "gemini-2.5-*"}) {
+		t.Fatal("gpt-4o should not match")
+	}
+
+	// Empty target models means match all
+	if !modelMatchesTargets("gpt-4o", nil) {
+		t.Fatal("empty targets should match any model")
+	}
+}
+
 func TestRewriteRequestAllowsCleanInvalidAndStructuralBodies(t *testing.T) {
 	tests := []struct {
 		name string

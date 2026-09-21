@@ -55,8 +55,8 @@ const abiVersion = 1
 
 const (
 	pluginName       = "antigravity-coding-filter"
-	pluginVersion    = "0.2.1"
-	pluginRepository = "https://github.com/jellyfish-p/cpa-plugin-antigravity-coding-filter"
+	pluginVersion    = "0.3.0"
+	pluginRepository = "https://github.com/justfortest661/cpa-plugin-antigravity-coding-filter"
 )
 
 func main() {}
@@ -208,6 +208,11 @@ func configFields() []pluginapi.ConfigField {
 			Description: "Enable the built-in coding software and agent keyword preset.",
 		},
 		{
+			Name:        "target_models",
+			Type:        pluginapi.ConfigFieldTypeArray,
+			Description: "Optional list of target model names or wildcard patterns (e.g. 'antigravity*', 'gemini-*'). If specified, filtering only applies when requested model matches one of the patterns.",
+		},
+		{
 			Name:        "custom_mappings",
 			Type:        pluginapi.ConfigFieldTypeObject,
 			Description: "Additional case-insensitive system-field mappings. Keys are blocked in block mode and rewritten to their values in rewrite mode.",
@@ -223,6 +228,9 @@ func handleModelRoute(request []byte) []byte {
 
 	cfg := activeFilterConfig()
 	if cfg.Mode != filterModeBlock {
+		return mustEnvelope(pluginapi.ModelRouteResponse{Handled: false})
+	}
+	if !modelMatchesTargets(req.RequestedModel, cfg.TargetModels) {
 		return mustEnvelope(pluginapi.ModelRouteResponse{Handled: false})
 	}
 	decision := classifyRequestWithConfig(req.Body, cfg)
@@ -272,6 +280,14 @@ func handleRequestInterceptBefore(request []byte) []byte {
 	}
 	cfg := activeFilterConfig()
 	if cfg.Mode != filterModeRewrite {
+		return mustEnvelope(pluginapi.RequestInterceptResponse{})
+	}
+
+	modelToCheck := req.Model
+	if modelToCheck == "" {
+		modelToCheck = req.RequestedModel
+	}
+	if !modelMatchesTargets(modelToCheck, cfg.TargetModels) && !modelMatchesTargets(req.RequestedModel, cfg.TargetModels) {
 		return mustEnvelope(pluginapi.RequestInterceptResponse{})
 	}
 
@@ -390,6 +406,7 @@ type rewriteMapping struct {
 type filterConfig struct {
 	Mode               filterMode
 	UseDefaultKeywords bool
+	TargetModels       []string
 	CustomMappings     []rewriteMapping
 }
 
@@ -409,6 +426,7 @@ func applyFilterConfig(cfg filterConfig) {
 	currentFilterConfig = filterConfig{
 		Mode:               cfg.Mode,
 		UseDefaultKeywords: cfg.UseDefaultKeywords,
+		TargetModels:       append([]string(nil), cfg.TargetModels...),
 		CustomMappings:     append([]rewriteMapping(nil), normalizeMappings(cfg.CustomMappings)...),
 	}
 }
@@ -420,6 +438,7 @@ func activeFilterConfig() filterConfig {
 	return filterConfig{
 		Mode:               currentFilterConfig.Mode,
 		UseDefaultKeywords: currentFilterConfig.UseDefaultKeywords,
+		TargetModels:       append([]string(nil), currentFilterConfig.TargetModels...),
 		CustomMappings:     append([]rewriteMapping(nil), currentFilterConfig.CustomMappings...),
 	}
 }
@@ -463,6 +482,13 @@ func parseFilterConfigYAML(raw []byte) (filterConfig, error) {
 		}
 		cfg.UseDefaultKeywords = boolValue
 	}
+	if value, exists := values["target_models"]; exists {
+		models, err := parseTargetModels(value)
+		if err != nil {
+			return filterConfig{}, err
+		}
+		cfg.TargetModels = models
+	}
 	if value, exists := values["custom_mappings"]; exists {
 		mappings, err := parseCustomMappings(value)
 		if err != nil {
@@ -471,6 +497,68 @@ func parseFilterConfigYAML(raw []byte) (filterConfig, error) {
 		cfg.CustomMappings = mappings
 	}
 	return cfg, nil
+}
+
+func parseTargetModels(value any) ([]string, error) {
+	switch typed := value.(type) {
+	case nil:
+		return nil, nil
+	case string:
+		entries := strings.FieldsFunc(typed, func(r rune) bool {
+			return r == ',' || r == '\n' || r == '\r'
+		})
+		var res []string
+		for _, e := range entries {
+			e = strings.TrimSpace(e)
+			if e != "" {
+				res = append(res, strings.ToLower(e))
+			}
+		}
+		return res, nil
+	case []any:
+		var res []string
+		for _, item := range typed {
+			text, ok := item.(string)
+			if !ok {
+				return nil, fmt.Errorf("target_models items must be strings")
+			}
+			text = strings.TrimSpace(text)
+			if text != "" {
+				res = append(res, strings.ToLower(text))
+			}
+		}
+		return res, nil
+	default:
+		return nil, fmt.Errorf("target_models must be an array or string")
+	}
+}
+
+func modelMatchesTargets(model string, targets []string) bool {
+	if len(targets) == 0 {
+		return true // If no target models specified, applies to all
+	}
+	if model == "" {
+		return false
+	}
+	modelLower := strings.ToLower(model)
+	for _, pattern := range targets {
+		if pattern == "*" || pattern == modelLower {
+			return true
+		}
+		if strings.HasSuffix(pattern, "*") {
+			prefix := strings.TrimSuffix(pattern, "*")
+			if strings.HasPrefix(modelLower, prefix) {
+				return true
+			}
+		}
+		if strings.HasPrefix(pattern, "*") {
+			suffix := strings.TrimPrefix(pattern, "*")
+			if strings.HasSuffix(modelLower, suffix) {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func parseCustomMappings(value any) ([]rewriteMapping, error) {
