@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "plugins": [
+    {
+      "id": "antigravity-coding-filter",
+      "name": "Antigravity Coding Filter (Target Models Edition)",
+      "description": "Enhanced fork supporting model filtering (target_models). Intercepts requests from coding software to prevent Google Antigravity account bans.",
+      "author": "justfortest661",
+      "version": "0.3.0",
+      "repository": "https://github.com/justfortest661/cpa-plugin-antigravity-coding-filter",
+      "homepage": "https://github.com/justfortest661/cpa-plugin-antigravity-coding-filter",
+      "license": "MIT",
+      "tags": [
+        "Interceptor",
+        "Antigravity",
+        "Security"
+      ]
+    }
+  ]
+}
