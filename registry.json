@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "plugins": [
     {
       "id": "antigravity-coding-filter",
@@ -14,31 +14,46 @@
         "Interceptor",
         "Security"
       ],
-      "artifacts": {
-        "linux/amd64": {
-          "url": "https://github.com/justfortest661/cpa-plugin-antigravity-coding-filter/releases/download/v0.3.0/antigravity-coding-filter_0.3.0_linux_amd64.zip",
-          "sha256": "3cb075a3424d5dc29ef3c0c0ea9ea769c3a35eec0617b43a9926955e8c1b6978"
-        },
-        "linux/arm64": {
-          "url": "https://github.com/justfortest661/cpa-plugin-antigravity-coding-filter/releases/download/v0.3.0/antigravity-coding-filter_0.3.0_linux_arm64.zip",
-          "sha256": "44adfe95f32488a0ca9a811c0f00ef414902c3fc3aece48c6680a6b1e6005c21"
-        },
-        "windows/amd64": {
-          "url": "https://github.com/justfortest661/cpa-plugin-antigravity-coding-filter/releases/download/v0.3.0/antigravity-coding-filter_0.3.0_windows_amd64.zip",
-          "sha256": "db200d7202334863cb32b2b11598efb09f42589aa583d78da40dbd3fdfca27a1"
-        },
-        "windows/arm64": {
-          "url": "https://github.com/justfortest661/cpa-plugin-antigravity-coding-filter/releases/download/v0.3.0/antigravity-coding-filter_0.3.0_windows_arm64.zip",
-          "sha256": "374f67c2957b9fb260907dbf2257262bc2b5ea912f2c83699c279a05f15ca85f"
-        },
-        "darwin/amd64": {
-          "url": "https://github.com/justfortest661/cpa-plugin-antigravity-coding-filter/releases/download/v0.3.0/antigravity-coding-filter_0.3.0_darwin_amd64.zip",
-          "sha256": "6d3a8e97a3cf134c4f34608cbbba04499ff30386cfb81ea648705c86c1dd6802"
-        },
-        "darwin/arm64": {
-          "url": "https://github.com/justfortest661/cpa-plugin-antigravity-coding-filter/releases/download/v0.3.0/antigravity-coding-filter_0.3.0_darwin_arm64.zip",
-          "sha256": "82e0e4b8559eb4ff0e68d184457e50201264b38bf213e843c08059089f2fa8a7"
-        }
+      "install": {
+        "type": "direct",
+        "artifacts": [
+          {
+            "goos": "linux",
+            "goarch": "amd64",
+            "url": "https://github.com/justfortest661/cpa-plugin-antigravity-coding-filter/releases/download/v0.3.0/antigravity-coding-filter_0.3.0_linux_amd64.zip",
+            "sha256": "c55f3d2dcca2362a1d426ad17de23da53c2c987e514f1bd668088a51a44ed890"
+          },
+          {
+            "goos": "linux",
+            "goarch": "arm64",
+            "url": "https://github.com/justfortest661/cpa-plugin-antigravity-coding-filter/releases/download/v0.3.0/antigravity-coding-filter_0.3.0_linux_arm64.zip",
+            "sha256": "c7927afba3fbd03d484b30569de8151c4a1fd68a7298efef2c08be810a97f72d"
+          },
+          {
+            "goos": "windows",
+            "goarch": "amd64",
+            "url": "https://github.com/justfortest661/cpa-plugin-antigravity-coding-filter/releases/download/v0.3.0/antigravity-coding-filter_0.3.0_windows_amd64.zip",
+            "sha256": "e7845e687d38b6a9f10155e4d97b893891063991779ce59a0470f3f7378e97fb"
+          },
+          {
+            "goos": "windows",
+            "goarch": "arm64",
+            "url": "https://github.com/justfortest661/cpa-plugin-antigravity-coding-filter/releases/download/v0.3.0/antigravity-coding-filter_0.3.0_windows_arm64.zip",
+            "sha256": "99d932591f19b6f9916198e4a3b39eacb1b1a34cc62ef91aa1bf94e0dac0ea43"
+          },
+          {
+            "goos": "darwin",
+            "goarch": "amd64",
+            "url": "https://github.com/justfortest661/cpa-plugin-antigravity-coding-filter/releases/download/v0.3.0/antigravity-coding-filter_0.3.0_darwin_amd64.zip",
+            "sha256": "1401218beea24063d2f8b71a8001448f2816942079fc5eecd26578ff189a0680"
+          },
+          {
+            "goos": "darwin",
+            "goarch": "arm64",
+            "url": "https://github.com/justfortest661/cpa-plugin-antigravity-coding-filter/releases/download/v0.3.0/antigravity-coding-filter_0.3.0_darwin_arm64.zip",
+            "sha256": "987f001c8c864b7d9da2b837baf107b0f438128c6a2eb70a91f40b9a67d8626a"
+          }
+        ]
       }
     }
   ]
